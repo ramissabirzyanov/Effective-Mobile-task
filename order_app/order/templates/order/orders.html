@@ -1,0 +1,25 @@
+<div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>TABLE NUMBER</th>
+          <th>ITEM</th>
+          <th>QUANTITY</th>
+          <th>STATUS</th>
+          <th>TOTAL_PRICE</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order_item in order_items %}
+        <tr>
+          <th>{{ order_item.order.id }}</th>
+          <td>{{ order_item.order.table_number }}</td>
+          <td>{{ order_item.item.name }}</td>
+          <td>{{ order_item.quantity }}</td>
+          <td>{{ order_item.order.status }}</td>
+          <td>{{ order_item.order.toral_price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+  </div>

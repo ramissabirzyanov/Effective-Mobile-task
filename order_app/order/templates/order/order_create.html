@@ -1,0 +1,14 @@
+
+    <h1>Создание заказа</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }} 
+        
+        <h2>Select items:</h2>
+        <div>
+          {{ order_item_form.as_p }}
+        </div>
+    
+        <button type="submit">Создать</button>
+      </form>
+    </form>
