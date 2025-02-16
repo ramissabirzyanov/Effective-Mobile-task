@@ -1,5 +1,6 @@
 from django.db import models
 from order_app.item.models import Item
+from django.core.exceptions import ValidationError
 
 
 class Order(models.Model):
@@ -21,9 +22,18 @@ class Order(models.Model):
         verbose_name = 'order'
     
     def calculate_total_price(self):
-        total = sum(order_item.get_item_price for order_item in self.order_items.all())
+        total = sum(order_item.get_item_price() for order_item in self.order_items.all())
         self.total_price = total
         self.save()
+    
+    def clean(self):
+        """Запрещает сохранение пустого заказа"""
+        if not self.order_items.exists():
+            raise ValidationError("You can't create a order without any item")
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"Order {self.id}, table {self.table_number}. Status {self.status}"
@@ -33,6 +43,6 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.DO_NOTHING, related_name='order_items')
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
-
+    
     def get_item_price(self):
         return self.item.price * self.quantity

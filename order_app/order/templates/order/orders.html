@@ -1,25 +1,40 @@
-<div>
-    <table>
-      <thead>
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<h1>Список заказов</h1>
+<table border="1">
+    <thead>
         <tr>
-          <th>ID</th>
-          <th>TABLE NUMBER</th>
-          <th>ITEM</th>
-          <th>QUANTITY</th>
-          <th>STATUS</th>
-          <th>TOTAL_PRICE</th>
+            <th>ID</th>
+            <th>Номер стола</th>
+            <th>Блюда</th>
+            <th>Общая стоимость</th>
+            <th>Статус</th>
         </tr>
-      </thead>
-      <tbody>
-        {% for order_item in order_items %}
-        <tr>
-          <th>{{ order_item.order.id }}</th>
-          <td>{{ order_item.order.table_number }}</td>
-          <td>{{ order_item.item.name }}</td>
-          <td>{{ order_item.quantity }}</td>
-          <td>{{ order_item.order.status }}</td>
-          <td>{{ order_item.order.toral_price }}</td>
-        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.table_number }}</td>
+                <td>
+                    <ul>
+                        {% for order_item in order.order_items.all %}
+                        <li>
+                            {{ order_item.item.name }} ({{ order_item.quantity }} x {{ order_item.item.price }})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ order.total_price }}</td>
+                <td>{{ order.get_status_display }}</td> 
+            </tr>
         {% endfor %}
-    </table>
-  </div>
+    </tbody>
+</table>

@@ -1,14 +1,28 @@
+<h2>Создание нового заказа</h2>
 
-    <h1>Создание заказа</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }} 
-        
-        <h2>Select items:</h2>
-        <div>
-          {{ order_item_form.as_p }}
-        </div>
+<form method="post">
+    {% csrf_token %}
     
-        <button type="submit">Создать</button>
-      </form>
-    </form>
+    <h3>Детали заказа</h3>
+    {{ form.as_p }}
+    
+    <h3>Выберите блюда</h3>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Цена</th>
+            <th>Количество</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }} ₽</td>
+            <td>
+                <input type="number" name="item_{{ item.id }}" value="0" min="0">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <button type="submit">Создать заказ</button>
+</form>
