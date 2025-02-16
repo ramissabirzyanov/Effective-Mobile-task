@@ -1,0 +1,27 @@
+<h2>Заказ столика № {{ order.table_number }}</h2>
+
+
+<div>
+    <table>
+        <tr>
+            <th>Название</th>
+            <th>Стоимость</th>
+            <th>Количество</th>
+            <th>Итого</th>
+        </tr>
+        {% for order_item in order.order_items.all %}
+        <tr>
+            <td>{{ order_item.item.name }}</td>
+            <td>{{ order_item.item.price }}</td>
+            <td>{{ order_item.quantity }}</td>
+            <td>{{ order_item.get_item_price }}</td>
+        </td>
+        {% endfor %}
+    </table>
+    <br>
+    <div>
+        Общая стоимость заказа: {{ order.total_price }}
+        <br>
+        Статус заказа: {{ order.get_status_display }}
+    </div> 
+</div>

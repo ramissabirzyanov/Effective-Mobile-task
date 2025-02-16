@@ -25,16 +25,7 @@ class Order(models.Model):
         total = sum(order_item.get_item_price() for order_item in self.order_items.all())
         self.total_price = total
         self.save()
-    
-    def clean(self):
-        """Запрещает сохранение пустого заказа"""
-        if not self.order_items.exists():
-            raise ValidationError("You can't create a order without any item")
-    
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return f"Order {self.id}, table {self.table_number}. Status {self.status}"
 
