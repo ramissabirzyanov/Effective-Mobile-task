@@ -56,7 +56,7 @@ class OrderCreateView(views.SuccessMessageMixin, CreateView):
                 
         except ValueError:
             self.object.delete()
-            messages.ERROR(self.request, "Check quantity")
+            messages.error(self.request, "Check quantity")
             return self.form_invalid(form)
 
 
@@ -78,15 +78,13 @@ class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         order = self.object
-        added_order_items = OrderItem.objects.filter(order=order)
-        for order_item in added_order_items:
-            quantity =  self.request.POST.get(f'item_{order_item.item.id}')
-            if quantity and int(quantity) > 0:
-                order_item.quantity += int(quantity)
-                order_item.save()
+        items_to_update = OrderService.update_quantity(order, self.request.POST)
+        if items_to_update:
+            OrderItem.objects.bulk_update(items_to_update, ['quantity'])
         new_items = OrderService.check_items(order, self.request.POST)
         if new_items:
             OrderItem.objects.bulk_create(new_items)
+        
         order.calculate_total_price()
         return response
     
