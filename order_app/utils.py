@@ -14,8 +14,6 @@ class OrderService:
     def add_new_items(order, request):
         order_items = []
         existing_item_ids = set(OrderItem.objects.filter(order=order).values_list("item_id", flat=True))
-        print(existing_item_ids)
-
         for key, quantity in request.items():
             if key.startswith('item_') and quantity.isdigit():
                 item_id = int(key.split('_')[1])

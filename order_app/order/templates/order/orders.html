@@ -12,6 +12,12 @@
 </div>
 <br>
 <hr>
+<form method="get">
+    {{ filter.form.as_p }}
+    <button type="submit">Поиск</button>
+</form>
+<hr>
+<br>
 <h1>Список заказов</h1>
 <table border="1">
     <thead>
@@ -26,7 +32,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for order in orders %}
+        {% for order in filter.qs %}
             <tr>
                 <td><a href="{% url 'order_detail' order.id %}">{{ order.id }}</a></td>
                 <td>{{ order.table_number }}</td>
