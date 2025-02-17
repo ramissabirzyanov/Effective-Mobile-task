@@ -21,6 +21,8 @@
             <th>Блюда</th>
             <th>Общая стоимость</th>
             <th>Статус</th>
+            <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -38,7 +40,9 @@
                     </ul>
                 </td>
                 <td>{{ order.total_price }}</td>
-                <td>{{ order.get_status_display }}</td> 
+                <td>{{ order.get_status_display }}</td>
+                <td><a href="{% url 'order_update' order.id %}">edit</a></td>
+                <td><a href="{% url 'order_delete' order.id %}">delete</a></td>
             </tr>
         {% endfor %}
     </tbody>

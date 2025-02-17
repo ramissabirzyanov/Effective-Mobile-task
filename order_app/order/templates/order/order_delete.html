@@ -1,0 +1,7 @@
+<h2>Удаление заказа</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <p>Вы уверены что хотите удалить заказа столика №{{ order.table_number }}?</p>
+    <input class="btn btn-dark" type="submit" value="Удалить">
+</form>

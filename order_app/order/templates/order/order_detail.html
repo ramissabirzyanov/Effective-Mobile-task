@@ -1,6 +1,13 @@
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <h2>Заказ столика № {{ order.table_number }}</h2>
-
-
+<br>
 <div>
     <table>
         <tr>
@@ -22,14 +29,18 @@
     <div>
         Общая стоимость заказа: {{ order.total_price }}
         <br>
+        <br>
         Статус заказа: {{ order.get_status_display }}
     </div> 
 </div>
-<!-- <form method="post">
+<hr>
+<form method="post" action="{% url 'order_update' order.id %}">
     {% csrf_token %}
-    
-    <h3>Изменить статус</h3>
-    {{ form.as_p }}
-    <button type="submit" name="update">Изменить</button>
-</form> -->
+    <button type="submit">Изменить заказ</button>
+</form>
+
+<form method="post" action="{% url 'order_delete' order.id %}">
+    {% csrf_token %}
+    <button type="submit">Удалить заказ</button>
+</form>
 

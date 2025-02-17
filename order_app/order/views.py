@@ -87,6 +87,7 @@ class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['items'] = Item.objects.all()
+        context['form'] = OrderUpdateForm(instance=self.object)
         return context
 
     def get_success_url(self):
@@ -103,3 +104,10 @@ class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
                 order_item.save()
         order.calculate_total_price()
         return response
+
+
+class OrderDeleteView(views.SuccessMessageMixin, DeleteView):
+    model=Order
+    template_name='order/order_delete.html'
+    success_message='Order was deleted'
+    success_url= reverse_lazy('orders')
