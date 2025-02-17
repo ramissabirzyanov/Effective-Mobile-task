@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from django.contrib import messages
@@ -13,6 +12,7 @@ from .serializers import OrderSerializer
 from .forms import OrderCreateForm, OrderUpdateForm
 from .filters import OrderFilter
 from django.core.exceptions import ValidationError
+from order_app.utils import OrderService
 
 
 class OrdersAPIView(ModelViewSet):
@@ -46,36 +46,18 @@ class OrderCreateView(views.SuccessMessageMixin, CreateView):
         try:
             response = super().form_valid(form) 
             order = self.object
-            items_added = False
-
-
-            for key, quantity in self.request.POST.items():
-                if key.startswith('item_') and quantity.isdigit():
-                    item_id = key.split('_')[1]
-                    try:
-                        item = Item.objects.get(id=item_id)
-                        if int(quantity) > 0:
-                            OrderItem.objects.create(order=order, item=item, quantity=int(quantity))
-                            items_added = True
-                    except Item.DoesNotExist:
-                        self.object.delete()
-                        messages.ERROR(self.request, "There is no such item.")
-                        return self.form_invalid(form)
+            items_added = OrderService.check_items(order, self.request.POST)
             if not items_added:
                 order.delete()
                 raise ValidationError("You can't create an order without any item")
+            OrderItem.objects.bulk_create(items_added)
             order.calculate_total_price()
             return response
                 
         except ValueError:
-                    self.object.delete()
-                    messages.ERROR(self.request, "Check quantity")
-                    return self.form_invalid(form)
-
-
-class OrderDetailView(DetailView):
-    model = Order
-    template_name='order/order_detail.html'
+            self.object.delete()
+            messages.ERROR(self.request, "Check quantity")
+            return self.form_invalid(form)
 
 
 class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
@@ -102,8 +84,16 @@ class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
             if quantity and int(quantity) > 0:
                 order_item.quantity += int(quantity)
                 order_item.save()
+        new_items = OrderService.check_items(order, self.request.POST)
+        if new_items:
+            OrderItem.objects.bulk_create(new_items)
         order.calculate_total_price()
         return response
+    
+
+class OrderDetailView(DetailView):
+    model = Order
+    template_name='order/order_detail.html'
 
 
 class OrderDeleteView(views.SuccessMessageMixin, DeleteView):

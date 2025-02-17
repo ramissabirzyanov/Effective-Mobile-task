@@ -34,12 +34,12 @@
     </div> 
 </div>
 <hr>
-<form method="post" action="{% url 'order_update' order.id %}">
+<form method="get" action="{% url 'order_update' order.id %}">
     {% csrf_token %}
     <button type="submit">Изменить заказ</button>
 </form>
 
-<form method="post" action="{% url 'order_delete' order.id %}">
+<form method="get" action="{% url 'order_delete' order.id %}">
     {% csrf_token %}
     <button type="submit">Удалить заказ</button>
 </form>
