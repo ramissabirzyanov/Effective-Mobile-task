@@ -7,12 +7,11 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.views import FilterView
 from .models import Order, OrderItem
-from order_app.item.models import Item
 from .serializers import OrderSerializer
 from .forms import OrderCreateForm, OrderUpdateForm
 from .filters import OrderFilter
 from django.core.exceptions import ValidationError
-from order_app.utils import OrderService
+from order_app.utils import OrderService, OrderContextMixin
 
 
 class OrdersAPIView(ModelViewSet):
@@ -30,23 +29,18 @@ class OrdersListView(FilterView):
     context_object_name = 'orders'
 
 
-class OrderCreateView(views.SuccessMessageMixin, CreateView):
+class OrderCreateView(OrderContextMixin, views.SuccessMessageMixin, CreateView):
     model = Order
     form_class = OrderCreateForm
     template_name = 'order/order_create.html'
     success_message = 'Order has been created'
     success_url = reverse_lazy('orders')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['items'] = Item.objects.all()
-        return context
-
     def form_valid(self, form):
         try:
             response = super().form_valid(form) 
             order = self.object
-            items_added = OrderService.check_items(order, self.request.POST)
+            items_added = OrderService.add_new_items(order, self.request.POST)
             if not items_added:
                 order.delete()
                 raise ValidationError("You can't create an order without any item")
@@ -60,17 +54,16 @@ class OrderCreateView(views.SuccessMessageMixin, CreateView):
             return self.form_invalid(form)
 
 
-class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
+class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
     model=Order
     form_class=OrderUpdateForm
     template_name='order/order_update.html'
     success_message='Order has been changed'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['items'] = Item.objects.all()
-        context['form'] = OrderUpdateForm(instance=self.object)
-        return context
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.instance = self.get_object()
+        return form
 
     def get_success_url(self):
         return reverse_lazy('order_detail', kwargs={'pk': self.object.pk})
@@ -81,10 +74,9 @@ class OrderUpdateView(views.SuccessMessageMixin, UpdateView):
         items_to_update = OrderService.update_quantity(order, self.request.POST)
         if items_to_update:
             OrderItem.objects.bulk_update(items_to_update, ['quantity'])
-        new_items = OrderService.check_items(order, self.request.POST)
+        new_items = OrderService.add_new_items(order, self.request.POST)
         if new_items:
             OrderItem.objects.bulk_create(new_items)
-        
         order.calculate_total_price()
         return response
     
