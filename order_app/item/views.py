@@ -3,13 +3,13 @@ from django.views.generic import CreateView, ListView
 from django.contrib.messages.views import SuccessMessageMixin
 from rest_framework.viewsets import ModelViewSet
 from .models import Item
-from .serializers import ItemSerilizer
+from .serializers import ItemSerializer
 from .forms import ItemCreateForm
 
 
 class ItemAPIView(ModelViewSet):
     queryset = Item.objects.all()
-    serializer_class = ItemSerilizer
+    serializer_class = ItemSerializer
 
 
 class ItemListView(ListView):

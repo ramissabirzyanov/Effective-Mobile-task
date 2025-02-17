@@ -73,6 +73,7 @@ class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         order = self.object
+        self.request.POST
         items_to_update = OrderService.update_quantity(order, self.request.POST)
         if items_to_update:
             OrderItem.objects.bulk_update(items_to_update, ['quantity'])

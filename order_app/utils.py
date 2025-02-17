@@ -28,7 +28,7 @@ class OrderService:
         items_to_update = []
         added_order_items = OrderItem.objects.filter(order=order)
         for order_item in added_order_items:
-            quantity = int(request.get(f'item_{order_item.item.id}'))
+            quantity = int(request.get(f'item_{order_item.item.id}', 0))
             if quantity > 0:
                 order_item.quantity += quantity
                 items_to_update.append(order_item)
