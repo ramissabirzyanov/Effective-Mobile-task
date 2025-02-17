@@ -9,8 +9,8 @@ class OrderCreateForm(forms.ModelForm):
         fields = ['table_number', 'status']
 
 
-class OrderStatusUpdateForm(forms.ModelForm):
+class OrderUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['status']
+        fields = ['table_number','status']
