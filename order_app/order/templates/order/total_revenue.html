@@ -1,0 +1,17 @@
+<title>Общая выручка</title>
+</head>
+<body>
+    <hr>
+    <h2>Общая выручка</h2>
+    <p>Общая выручка за все оплаченные заказы: {{ total_revenue }} руб.</p>
+
+    <h3>Список оплаченных заказов:</h3>
+    <ul>
+        {% for order in paid_orders %}
+            <li>Заказ #{{ order.id }} - {{ order.total_price }} руб.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+</body>
+</html>

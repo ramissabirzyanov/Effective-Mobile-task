@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, TemplateView
 from django.contrib import messages
 from django.contrib.messages import views
 from rest_framework.viewsets import ModelViewSet
@@ -12,6 +12,8 @@ from .forms import OrderCreateForm, OrderUpdateForm
 from .filters import OrderFilter
 from django.core.exceptions import ValidationError
 from order_app.utils import OrderService, OrderContextMixin
+from django.db.models import Sum
+
 
 
 class OrdersAPIView(ModelViewSet):
@@ -91,3 +93,15 @@ class OrderDeleteView(views.SuccessMessageMixin, DeleteView):
     template_name='order/order_delete.html'
     success_message='Order was deleted'
     success_url= reverse_lazy('orders')
+
+
+class TotalRevenueView(TemplateView):
+    template_name='order/total_revenue.html'
+
+    def get_context_data(self, **kwargs):
+        paid_orders = Order.objects.filter(status='paid')
+        total_revenue = paid_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0 
+        context = super().get_context_data(**kwargs)
+        context['paid_orders'] = paid_orders
+        context['total_revenue'] = total_revenue
+        return context
