@@ -6,7 +6,12 @@
 </ul>
 {% endif %}
 
-
+<br>
+<div>
+    <a role="button" href="{% url 'order_create' %}">Create a new order</a>
+</div>
+<br>
+<hr>
 <h1>Список заказов</h1>
 <table border="1">
     <thead>
@@ -21,7 +26,7 @@
     <tbody>
         {% for order in orders %}
             <tr>
-                <td>{{ order.id }}</td>
+                <td><a href="{% url 'order_detail' order.id %}">{{ order.id }}</a></td>
                 <td>{{ order.table_number }}</td>
                 <td>
                     <ul>

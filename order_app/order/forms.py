@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order, OrderItem
+from .models import Order
 
 
 class OrderCreateForm(forms.ModelForm):
@@ -9,8 +9,8 @@ class OrderCreateForm(forms.ModelForm):
         fields = ['table_number', 'status']
 
 
-class OrderItemForm(forms.ModelForm):
-    
+class OrderStatusUpdateForm(forms.ModelForm):
+
     class Meta:
-        model = OrderItem
-        fields = ['quantity']
+        model = Order
+        fields = ['status']

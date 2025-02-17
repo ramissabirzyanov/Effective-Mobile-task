@@ -8,5 +8,5 @@ router.register(r'api/orders', views.OrdersAPIView)
 urlpatterns = [
     path('', views.OrdersListView.as_view(), name='orders'),
     path('create/', views.OrderCreateView.as_view(), name='order_create'),
-    path('<int:pk>/', views.OrderDetailView.as_view(), name='order_detail')
+    path('<int:pk>/', views.OrderDetailView.as_view(), name='order_detail'),
 ]

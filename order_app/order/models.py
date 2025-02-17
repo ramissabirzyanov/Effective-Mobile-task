@@ -1,6 +1,5 @@
 from django.db import models
 from order_app.item.models import Item
-from django.core.exceptions import ValidationError
 
 
 class Order(models.Model):

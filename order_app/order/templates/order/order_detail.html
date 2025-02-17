@@ -25,3 +25,11 @@
         Статус заказа: {{ order.get_status_display }}
     </div> 
 </div>
+<form method="post">
+    {% csrf_token %}
+    
+    <h3>Изменить статус</h3>
+    {{ form.as_p }}
+    <button type="submit" name="update">Изменить</button>
+</form>
+

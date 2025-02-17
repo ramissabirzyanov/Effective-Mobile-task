@@ -1,7 +1,9 @@
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView
 from django.contrib import messages
 from django.contrib.messages import views
+from django.views.generic.edit import FormMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,7 +11,7 @@ from django_filters.views import FilterView
 from .models import Order, OrderItem
 from order_app.item.models import Item
 from .serializers import OrderSerializer
-from .forms import OrderCreateForm
+from .forms import OrderCreateForm, OrderStatusUpdateForm
 from .filters import OrderFilter
 from django.core.exceptions import ValidationError
 
@@ -72,6 +74,27 @@ class OrderCreateView(views.SuccessMessageMixin, CreateView):
                     return self.form_invalid(form)
 
 
-class OrderDetailView(DetailView):
+class OrderDetailView(FormMixin, DetailView):
     model = Order
     template_name='order/order_detail.html'
+    form_class = OrderStatusUpdateForm
+    success_url = 'orders'
+
+    def get_context_data(self, **kwargs):
+        """Добавляем форму изменения статуса в контекст"""
+        context = super().get_context_data(**kwargs)
+        # Передаем текущий экземпляр заказа для формы, чтобы отобразить текущий статус
+        context['form'] = OrderStatusUpdateForm(instance=self.object)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """Обрабатываем изменение статуса заказа"""
+        self.object = self.get_object()  # Загружаем объект заказа
+        form = self.form_class(request.POST, instance=self.object)
+        if "update" in request.POST:  # Проверяем, что это обновление статуса
+            if form.is_valid():
+                form.save()  # Сохраняем новый статус
+                return redirect(self.success_url)  # Перенаправляем обратно на детальную страницу
+
+        return self.render_to_response(self.get_context_data(form=form))
+

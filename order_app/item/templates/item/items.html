@@ -1,3 +1,17 @@
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li> {{ message }} </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<br>
+<div>
+    <a role="button" href="{% url 'item_create' %}">Create a new item</a>
+</div>
+<br>
+<hr>
 <div>
     <table>
         <thead>
