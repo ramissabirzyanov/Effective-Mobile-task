@@ -21,6 +21,9 @@ class Order(models.Model):
         verbose_name = 'order'
     
     def calculate_total_price(self):
+        """
+        Подсчет общей суммы всего заказа.
+        """
         total = sum(order_item.get_item_price() for order_item in self.order_items.all())
         self.total_price = total
         self.save()
@@ -35,4 +38,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     
     def get_item_price(self):
+        """
+        Подсчет итоговой стоимости конкретной позиции(item).
+        """
         return self.item.price * self.quantity

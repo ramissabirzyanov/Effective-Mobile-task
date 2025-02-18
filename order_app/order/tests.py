@@ -33,7 +33,7 @@ class Order_CRUD_test(TestCase):
         self.assertTemplateUsed(response, 'order/order_create.html')
 
     def test_post_order_create(self):
-        task_count = Order.objects.count()
+        order_count = Order.objects.count()
         form_data = {
             'table_number': '8',
             'status': 'waiting',
@@ -41,7 +41,7 @@ class Order_CRUD_test(TestCase):
         }
         response = self.client.post(reverse('order_create'), form_data)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(Order.objects.count(), task_count + 1)
+        self.assertEqual(Order.objects.count(), order_count + 1)
         self.assertTrue(Order.objects.filter(table_number=8).exists())
         self.assertRedirects(response, '/orders/')
         order = Order.objects.get(table_number=8)

@@ -14,10 +14,3 @@ COPY . .
 
 CMD python manage.py migrate\
     && python manage.py runserver 0.0.0.0:8000
-
-
-
-# ENV PYTHONPATH="${PYTHONPATH}:/app"
-# ENV PYTHONDONTWRITEBYTECODE 1
-# ENV PYTHONUNBUFFERED 1
-

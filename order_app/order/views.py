@@ -1,4 +1,6 @@
 from django.urls import reverse_lazy
+from django import forms
+from django.http import HttpResponse
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, TemplateView
 from django.contrib import messages
 from django.contrib.messages import views
@@ -17,6 +19,11 @@ from django.db.models import Sum
 
 
 class OrdersAPIView(ModelViewSet):
+    """
+    API ViewSet для работы с заказами.
+    Поддерживает стандартные CRUD-операции, а также фильтрацию и поиск.
+    """
+
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -25,6 +32,10 @@ class OrdersAPIView(ModelViewSet):
 
 
 class OrdersListView(FilterView):
+    """
+    View для отображения списка заказов с возможностью фильтрации.
+    """
+
     queryset = Order.objects.all()
     template_name = 'order/orders.html'
     filterset_class = OrderFilter
@@ -32,13 +43,18 @@ class OrdersListView(FilterView):
 
 
 class OrderCreateView(OrderContextMixin, views.SuccessMessageMixin, CreateView):
+    """
+    View для создания нового заказа.
+    Обрабатывает форму создания заказа, добавляет позиции к заказу и вычисляет общую стоимость.
+    Если позиции не добавлены, заказ не создается.
+    """
     model = Order
     form_class = OrderCreateForm
     template_name = 'order/order_create.html'
     success_message = 'Order has been created'
     success_url = reverse_lazy('orders')
 
-    def form_valid(self, form):
+    def form_valid(self, form: forms.ModelForm) -> HttpResponse:
         try:
             response = super().form_valid(form)
             order = self.object
@@ -57,6 +73,10 @@ class OrderCreateView(OrderContextMixin, views.SuccessMessageMixin, CreateView):
 
 
 class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
+    """
+    View для обновления существующего заказа.
+    Обрабатывает форму обновления заказа, обновляет количество позиций и добавляет новые позиции.
+    """
     model=Order
     form_class=OrderUpdateForm
     template_name='order/order_update.html'
@@ -70,7 +90,7 @@ class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('order_detail', kwargs={'pk': self.object.pk})
 
-    def form_valid(self, form):
+    def form_valid(self, form: forms.ModelForm) -> HttpResponse:
         response = super().form_valid(form)
         order = self.object
         self.request.POST
@@ -85,11 +105,17 @@ class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
     
 
 class OrderDetailView(DetailView):
+    """
+    View для детального просмотра заказа.
+    """
     model = Order
     template_name='order/order_detail.html'
 
 
 class OrderDeleteView(views.SuccessMessageMixin, DeleteView):
+    """
+    View для удаления заказа.
+    """
     model=Order
     template_name='order/order_delete.html'
     success_message='Order was deleted'
@@ -97,6 +123,9 @@ class OrderDeleteView(views.SuccessMessageMixin, DeleteView):
 
 
 class TotalRevenueView(TemplateView):
+    """
+    View для отображения общей выручки от оплаченных заказов.
+    """
     template_name='order/total_revenue.html'
 
     def get_context_data(self, **kwargs):

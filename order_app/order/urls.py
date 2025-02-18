@@ -1,6 +1,9 @@
 from django.urls import path
 from . import views
-
+"""
+Основные роуты для CRUD заказа. Также роут для вывода списка заказов.
+Маршрут revenue/ показывает сумму всех оплаченных заказов.
+"""
 
 urlpatterns = [
     path('', views.OrdersListView.as_view(), name='orders'),
