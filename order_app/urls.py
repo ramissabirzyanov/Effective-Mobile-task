@@ -23,7 +23,6 @@ urlpatterns = [
     path("docs/", schema_view.with_ui("swagger", cache_timeout=0), name="swagger-doc"),
     path('orders/', include('order_app.order.urls')),
     path('items/', include('order_app.item.urls')),
-    
 ]
 
 urlpatterns += [
