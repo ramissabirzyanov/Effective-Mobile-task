@@ -40,7 +40,8 @@ class OrderCreateView(OrderContextMixin, views.SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         try:
-            response = super().form_valid(form) 
+            response = super().form_valid(form)
+            print(form.data)
             order = self.object
             items_added = OrderService.add_new_items(order, self.request.POST)
             if not items_added:

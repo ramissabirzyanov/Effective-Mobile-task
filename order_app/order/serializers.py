@@ -29,6 +29,7 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ['id', 'table_number', 'status', 'total_price', 'items'] 
 
     def create(self, validated_data):
+        print(validated_data)
         items_data = validated_data.pop('order_items', []) 
         order = Order.objects.create(**validated_data)
         request_like_data = _post_data_to_request_format(items_data)
