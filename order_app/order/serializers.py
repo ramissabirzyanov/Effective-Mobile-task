@@ -15,6 +15,7 @@ def _post_data_to_request_format(items_data):
 class OrderItemsSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     quantity = serializers.IntegerField(min_value=0)
+    
     class Meta:
         model = OrderItem
         fields = ['id', 'item', 'quantity']
@@ -23,7 +24,8 @@ class OrderItemsSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemsSerializer(source='order_items', many=True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=3, read_only=True) 
-
+    table_number = serializers.IntegerField(min_value=0)
+    
     class Meta:
         model = Order
         fields = ['id', 'table_number', 'status', 'total_price', 'items'] 
