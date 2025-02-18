@@ -72,7 +72,11 @@
 
 Для сборки приложения используется Docker.
 ** Выполните команды: **
-  - git clone https://github.com/ramissabirzyanov/Effective-Mobile-task.git
-  - Создание файл .env в корне проекта. Пример файла в репозитории имеется (.env.example).
-  - docker-compose up --build
+  ```bash
+  git clone https://github.com/ramissabirzyanov/Effective-Mobile-task.git
+  ```
+  Создание файл .env в корне проекта. Пример файла в репозитории имеется (.env.example).
+  ```bash
+  docker-compose up --build
+  ```
 Приложение запуститься по адресу: http://127.0.0.1:8000/
