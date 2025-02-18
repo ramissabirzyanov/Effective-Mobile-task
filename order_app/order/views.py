@@ -17,7 +17,6 @@ from order_app.utils import OrderService, OrderContextMixin
 from django.db.models import Sum
 
 
-
 class OrdersAPIView(ModelViewSet):
     """
     API ViewSet для работы с заказами.
@@ -65,7 +64,7 @@ class OrderCreateView(OrderContextMixin, views.SuccessMessageMixin, CreateView):
             OrderItem.objects.bulk_create(items_added)
             order.calculate_total_price()
             return response
-                
+
         except ValueError:
             self.object.delete()
             messages.error(self.request, "Check quantity")
@@ -77,10 +76,10 @@ class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
     View для обновления существующего заказа.
     Обрабатывает форму обновления заказа, обновляет количество позиций и добавляет новые позиции.
     """
-    model=Order
-    form_class=OrderUpdateForm
-    template_name='order/order_update.html'
-    success_message='Order has been changed'
+    model = Order
+    form_class = OrderUpdateForm
+    template_name = 'order/order_update.html'
+    success_message = 'Order has been changed'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -102,35 +101,35 @@ class OrderUpdateView(OrderContextMixin, views.SuccessMessageMixin, UpdateView):
             OrderItem.objects.bulk_create(new_items)
         order.calculate_total_price()
         return response
-    
+
 
 class OrderDetailView(DetailView):
     """
     View для детального просмотра заказа.
     """
     model = Order
-    template_name='order/order_detail.html'
+    template_name = 'order/order_detail.html'
 
 
 class OrderDeleteView(views.SuccessMessageMixin, DeleteView):
     """
     View для удаления заказа.
     """
-    model=Order
-    template_name='order/order_delete.html'
-    success_message='Order was deleted'
-    success_url= reverse_lazy('orders')
+    model = Order
+    template_name = 'order/order_delete.html'
+    success_message = 'Order was deleted'
+    success_url = reverse_lazy('orders')
 
 
 class TotalRevenueView(TemplateView):
     """
     View для отображения общей выручки от оплаченных заказов.
     """
-    template_name='order/total_revenue.html'
+    template_name = 'order/total_revenue.html'
 
     def get_context_data(self, **kwargs):
         paid_orders = Order.objects.filter(status='paid')
-        total_revenue = paid_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0 
+        total_revenue = paid_orders.aggregate(Sum('total_price'))['total_price__sum'] or 0
         context = super().get_context_data(**kwargs)
         context['paid_orders'] = paid_orders
         context['total_revenue'] = total_revenue

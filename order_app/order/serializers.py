@@ -16,7 +16,7 @@ def _post_data_to_request_format(items_data) -> dict:
 class OrderItemsSerializer(serializers.ModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     quantity = serializers.IntegerField(min_value=0)
-    
+
     class Meta:
         model = OrderItem
         fields = ['id', 'item', 'quantity']
@@ -24,15 +24,15 @@ class OrderItemsSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemsSerializer(source='order_items', many=True)
-    total_price = serializers.DecimalField(max_digits=10, decimal_places=3, read_only=True) 
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=3, read_only=True)
     table_number = serializers.IntegerField(min_value=0)
-    
+
     class Meta:
         model = Order
-        fields = ['id', 'table_number', 'status', 'total_price', 'items'] 
+        fields = ['id', 'table_number', 'status', 'total_price', 'items']
 
     def create(self, validated_data: dict) -> Order:
-        items_data = validated_data.pop('order_items', []) 
+        items_data = validated_data.pop('order_items', [])
         order = Order.objects.create(**validated_data)
         request_like_data = _post_data_to_request_format(items_data)
         items_added = OrderService.add_new_items(order, request_like_data)

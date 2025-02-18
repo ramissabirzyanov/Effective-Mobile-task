@@ -17,4 +17,4 @@ class OrderUpdateForm(forms.ModelForm):
     """
     class Meta:
         model = Order
-        fields = ['table_number','status']
+        fields = ['table_number', 'status']

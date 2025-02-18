@@ -3,7 +3,7 @@ from order_app.item.models import Item
 
 
 class Order(models.Model):
-    
+
     STATUS_CHOICES = [
         ('waiting', 'В ожидании'),
         ('done', 'Готово'),
@@ -11,15 +11,19 @@ class Order(models.Model):
     ]
 
     table_number = models.PositiveIntegerField(unique=True, verbose_name='table_number')
-    items = models.ManyToManyField(Item, related_name='orders', through='OrderItem', verbose_name='items')
-    total_price = models.DecimalField(max_digits=10, decimal_places=3, verbose_name='total_price', default=0)
+    items = models.ManyToManyField(
+        Item, related_name='orders', through='OrderItem', verbose_name='items'
+    )
+    total_price = models.DecimalField(
+        max_digits=10, decimal_places=3, verbose_name='total_price', default=0
+    )
     status = models.CharField(choices=STATUS_CHOICES, verbose_name='status', default='waiting')
 
     class Meta:
         ordering = ['id']
         db_table = 'order'
         verbose_name = 'order'
-    
+
     def calculate_total_price(self):
         """
         Подсчет общей суммы всего заказа.
@@ -36,7 +40,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(default=1)
-    
+
     def get_item_price(self):
         """
         Подсчет итоговой стоимости конкретной позиции(item).

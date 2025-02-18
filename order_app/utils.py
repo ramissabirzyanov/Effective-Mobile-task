@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 
 
-
 class OrderService:
     """
     Добавляет товары в список на основе данных из запроса.
@@ -13,11 +12,13 @@ class OrderService:
     @staticmethod
     def add_new_items(order: Order, request: dict) -> list[OrderItem]:
         order_items = []
-        existing_item_ids = set(OrderItem.objects.filter(order=order).values_list("item_id", flat=True))
+        existing_item_ids = set(
+            OrderItem.objects.filter(order=order).values_list("item_id", flat=True)
+        )
         for key, quantity in request.items():
             if key.startswith('item_') and quantity.isdigit():
                 item_id = int(key.split('_')[1])
-                quantity=int(quantity)
+                quantity = int(quantity)
                 if quantity > 0 and item_id not in existing_item_ids:
                     item = get_object_or_404(Item, id=item_id)
                     order_items.append(OrderItem(order=order, item=item, quantity=quantity))

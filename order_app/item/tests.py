@@ -11,7 +11,7 @@ class Order_CRUD_test(TestCase):
     def test_item_list(self):
         response = self.client.get('/items/')
         self.assertEqual(response.status_code, 200)
-    
+
     def test_api_item_list(self):
         response = self.client.get('/api/items/')
         self.assertEqual(response.status_code, 200)

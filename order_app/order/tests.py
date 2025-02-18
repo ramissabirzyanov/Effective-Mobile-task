@@ -11,7 +11,8 @@ class Order_CRUD_test(TestCase):
         self.item2 = Item.objects.create(name='cola', price=200)
         self.order = Order.objects.create(
             table_number=5,
-            status ='waiting')
+            status='waiting'
+        )
         OrderItem.objects.create(order=self.order, item=self.item1, quantity=2)
         OrderItem.objects.create(order=self.order, item=self.item2, quantity=3)
         self.order.calculate_total_price()
@@ -19,7 +20,7 @@ class Order_CRUD_test(TestCase):
     def test_order_list(self):
         response = self.client.get('/orders/')
         self.assertEqual(response.status_code, 200)
-    
+
     def test_api_order_list(self):
         response = self.client.get('/api/orders/')
         self.assertEqual(response.status_code, 200)
