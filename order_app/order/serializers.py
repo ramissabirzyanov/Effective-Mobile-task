@@ -1,12 +1,13 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import Order, OrderItem
 from order_app.item.models import Item
 from order_app.utils import OrderService
 
 
-def _post_data_to_request_format(items_data):
+def _post_data_to_request_format(items_data) -> dict:
     """
-    Конвертирует данные API в формат, совместимый с OrderService.
+    Конвертирует данные из запроса в формат, совместимый с OrderService.
     На выходе: {"item_1": 2, "item_2": 3}
     """
     return {f"item_{item['item'].id}": str(item["quantity"]) for item in items_data}
@@ -30,19 +31,18 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'table_number', 'status', 'total_price', 'items'] 
 
-    def create(self, validated_data):
-        print(validated_data)
+    def create(self, validated_data: dict) -> Order:
         items_data = validated_data.pop('order_items', []) 
         order = Order.objects.create(**validated_data)
         request_like_data = _post_data_to_request_format(items_data)
         items_added = OrderService.add_new_items(order, request_like_data)
         if not items_added:
-            raise "Can't create order with no any items"
+            raise ValidationError("Can't create order with no any items")
         OrderItem.objects.bulk_create(items_added)
         order.calculate_total_price()
         return order
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Order, validated_data: dict) -> Order:
         items_data = validated_data.pop('order_items', [])
         instance = super().update(instance, validated_data)
         request_like_data = _post_data_to_request_format(items_data)

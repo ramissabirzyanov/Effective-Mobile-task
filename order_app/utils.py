@@ -1,4 +1,4 @@
-from order_app.order.models import OrderItem
+from order_app.order.models import Order, OrderItem
 from order_app.item.models import Item
 from django.shortcuts import get_object_or_404
 from django.views import View
@@ -11,7 +11,7 @@ class OrderService:
     Возвращает список товаров, которые нужно добавить в зазаз.
     """
     @staticmethod
-    def add_new_items(order, request):
+    def add_new_items(order: Order, request: dict) -> list[OrderItem]:
         order_items = []
         existing_item_ids = set(OrderItem.objects.filter(order=order).values_list("item_id", flat=True))
         for key, quantity in request.items():
@@ -24,7 +24,7 @@ class OrderService:
         return order_items
 
     @staticmethod
-    def update_quantity(order, request):
+    def update_quantity(order: Order, request: dict) -> list[OrderItem]:
         items_to_update = []
         added_order_items = OrderItem.objects.filter(order=order)
         for order_item in added_order_items:
@@ -39,7 +39,7 @@ class OrderContextMixin(View):
     """
     Миксин для добавления списка товаров в контекст.
     """
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
         context = super().get_context_data(**kwargs)
         context['items'] = Item.objects.all()
         return context
